@@ -1,7 +1,7 @@
 # @author FlashSoft
 # == 自定义配置 ==============================================
 
-# 配置nodered的接收地址
+# 配置nodered的接收地址 加上 http://192.168.1.1:1880/miai
 nodered_url=""
 
 # 设定asr拦截词,以竖线分割每个拦截词
@@ -109,7 +109,7 @@ while true;do
       # @todo:
       # 转发asr和res给服务端接口,远端可以处理控制逻辑完成后返回需要播报的TTS文本
       # 2秒连接超时,4秒传输超时
-      tts=`curl --insecure –connect-timeout 2 -m 2 -s -u "${nodered_auth}" --data-urlencode "asr=${asr_content}" --data-urlencode "res=${res_content}" "${nodered_url}/miai"`
+      tts=`curl --insecure –connect-timeout 2 -m 2 -s -u "${nodered_auth}" --data-urlencode "asr=${asr_content}" --data-urlencode "res=${res_content}" "${nodered_url}"`
       echo "== 请求完成"
 
       # 如果远端返回内容不为空则用TTS播报之
@@ -138,7 +138,7 @@ while true;do
       fi
     fi
 
-    log_res=`curl --insecure –connect-timeout 2 -m 2 -s -u "${nodered_auth}" --data-urlencode "asr=${asr_content}" --data-urlencode "res=${res_content}" "${nodered_url}/miai/set/log"`
+    log_res=`curl --insecure –connect-timeout 2 -m 2 -s -u "${nodered_auth}" --data-urlencode "asr=${asr_content}" --data-urlencode "res=${res_content}" "${nodered_url}/set/log"`
     echo "== 投日志 | ${log_res}"
   fi
  
@@ -148,8 +148,8 @@ while true;do
     step=`expr ${now} - ${last_time}`
     # 根据设定时间间隔获取更新词
     if [[ "$step" -gt "${keywords_update_timeout}" ]];then
-        asr_keywords=`curl --insecure –connect-timeout 2 -m 2 -s -u "${nodered_auth}" "${nodered_url}/miai/get/asr"`
-        res_keywords=`curl --insecure –connect-timeout 2 -m 2 -s -u "${nodered_auth}" "${nodered_url}/miai/get/res"`
+        asr_keywords=`curl --insecure –connect-timeout 2 -m 2 -s -u "${nodered_auth}" "${nodered_url}/get/asr"`
+        res_keywords=`curl --insecure –connect-timeout 2 -m 2 -s -u "${nodered_auth}" "${nodered_url}/get/res"`
         echo "== 更新关键词 | asr关键词内容: ${asr_keywords} | res关键词内容: ${res_keywords}"
         last_time=`date +%s`
     fi
